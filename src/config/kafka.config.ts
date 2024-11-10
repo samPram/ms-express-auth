@@ -2,7 +2,7 @@ import { Kafka } from "kafkajs";
 
 const kafka = new Kafka({
   clientId: process.env.K_CLIENTID as string,
-  brokers: [`${process.env.K_HOST}`], // Ganti dengan alamat broker Kafka Anda
+  brokers: [`localhost:9092`],
 });
 
 const producer = kafka.producer();
