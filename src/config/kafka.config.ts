@@ -1,8 +1,11 @@
 import { Kafka } from "kafkajs";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const kafka = new Kafka({
   clientId: process.env.K_CLIENTID as string,
-  brokers: [`localhost:9092`],
+  brokers: [`kafka:9092`],
 });
 
 const producer = kafka.producer();

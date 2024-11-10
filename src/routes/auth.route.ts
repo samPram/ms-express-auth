@@ -12,8 +12,4 @@ router.get("/sessioninfo", verifySession(), (req: any, res) => {
   });
 });
 
-router.get("/test", (req, res) => {
-  res.json({ a: "test" });
-});
-
 export default router;

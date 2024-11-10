@@ -7,7 +7,8 @@ import Dashboard from "supertokens-node/recipe/dashboard";
 import UserRoles from "supertokens-node/recipe/userroles";
 import { middleware, errorHandler } from "supertokens-node/framework/express";
 import authRoutes from "./routes/auth.route";
-import { producer } from "./config/kafka.config";
+import { consumer, producer } from "./config/kafka.config";
+import { ConsumeCreateUser } from "./controllers/auth.controller";
 
 dotenv.config();
 const app = express();
@@ -18,6 +19,7 @@ app.use(express.json());
 producer.connect();
 
 console.log("Initializing SuperTokens...");
+console.log(process.env.S_APIDOMAIN, process.env.S_WEBSITEDOMAIN);
 // supertokens
 supertokens.init({
   framework: "express",
@@ -88,15 +90,15 @@ supertokens.init({
 
                 // Trigger event kafka
                 await producer.send({
-                  topic: "signup",
+                  topic: `${process.env.K_TOPIC}`,
                   messages: [
                     {
                       value: JSON.stringify({
-                        event: "signup",
+                        event: "create",
                         data: {
                           userName,
                           emailAddress: user.emails[0],
-                          identityNumer: user?.id,
+                          identityNumber: user?.id,
                         },
                       }),
                     },
@@ -140,5 +142,11 @@ app.use("/api/v1/auth", authRoutes);
 
 // Add this AFTER all your routes
 app.use(errorHandler());
+
+// kafka
+consumer.connect();
+
+// consume data kafka
+ConsumeCreateUser().catch(console.error);
 
 export default app;
